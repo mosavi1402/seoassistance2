@@ -265,6 +265,7 @@ tr:last-child td{border-bottom:none}
       <li class="nav-item" data-panel="keywords"><i class="fa-solid fa-tags"></i>تحقیق کلمات کلیدی</li>
       <li class="nav-item" data-panel="outline"><i class="fa-solid fa-sitemap"></i>ساختار محتوا</li>
       <li class="nav-item" data-panel="competitor"><i class="fa-solid fa-chess-knight"></i>تحلیل رقبا</li>
+      <li class="nav-item" data-panel="geo"><i class="fa-solid fa-globe"></i>GEO و دیده‌شدن در AI</li>
       <li class="nav-item" data-panel="checklist"><i class="fa-solid fa-list-check"></i>چک‌لیست فنی سئو</li>
       <li class="nav-item" data-panel="promptgen"><i class="fa-solid fa-comment-dots"></i>پرامپت بهبود با کلود</li>
       <li class="nav-item" data-panel="export"><i class="fa-solid fa-file-export"></i>خروجی و گزارش</li>
@@ -317,6 +318,17 @@ tr:last-child td{border-bottom:none}
 
         <div class="tip-box" style="margin-top:1rem" id="dailyTip">
           <i class="fa-solid fa-lightbulb"></i><span></span>
+        </div>
+
+        <div class="card" id="aiManagerCard" style="margin-top:1rem;display:none;border-inline-start:3px solid var(--accent)">
+          <div style="display:flex;align-items:center;gap:.5rem"><i class="fa-solid fa-robot" style="color:var(--accent)"></i><h3 style="margin:0">سلام 👋 این خلاصهٔ وضعیت سایت شماست</h3></div>
+          <div class="card-sub" id="aiManagerIntro" style="margin-top:.3rem"></div>
+          <div id="aiManagerCounts" style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:.8rem"></div>
+          <div style="margin-top:.9rem">
+            <div class="card-sub" style="margin-bottom:.4rem">پیشنهاد من برای امروز</div>
+            <div id="aiManagerActions"></div>
+          </div>
+          <div class="card-sub" style="margin-top:.6rem;font-size:.68rem">این خلاصه صرفاً بر اساس داده‌های واقعی همین پروژه (چک‌لیست، آخرین تحلیل صفحه، فرصت‌های سرچ‌کنسول و بررسی AI Visibility) ساخته می‌شود، نه حدس کلی دربارهٔ سئو.</div>
         </div>
 
         <div class="quick-grid">
@@ -886,6 +898,66 @@ tr:last-child td{border-bottom:none}
         </div>
       </section>
 
+      <!-- ============ GEO / AI VISIBILITY ============ -->
+      <section class="panel" data-panel="geo">
+        <div class="page-head">
+          <h1>GEO و دیده‌شدن در AI</h1>
+          <p>بررسی کنید وقتی کاربران از ChatGPT، Claude یا DeepSeek دربارهٔ موضوع سایت شما سؤال می‌پرسند، برند/سایت شما در پاسخ دیده، نام‌برده یا لینک داده می‌شود یا نه.</p>
+        </div>
+
+        <div class="tip-box" style="align-items:flex-start">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>این بررسی با فراخوانی مستقیم API همان مدل‌هایی انجام می‌شود که در «تنظیمات هوش مصنوعی» کلید آن‌ها را وارد کرده‌اید (نه لزوماً نسخهٔ وب ChatGPT/Gemini با جست‌وجوی زنده)، پس نتیجه یک Snapshot از پاسخ آن مدل در همین لحظه است، نه رتبهٔ رسمی یا تضمین‌شده. GEO Score واقعی فقط بر اساس پاسخ‌های ذخیره‌شده محاسبه می‌شود؛ اگر کلیدی متصل نباشد یا داده‌ای نداشته باشیم، عدد ساختگی نشان داده نمی‌شود.</span>
+        </div>
+
+        <div class="card" style="margin-top:1rem">
+          <h3>۱. تنظیم Entity برند</h3>
+          <div class="card-sub">این مقادیر برای تشخیص «آیا برند شما در پاسخ ذکر شده» استفاده می‌شوند؛ از تنظیمات پروژه پر می‌شوند و اینجا قابل ویرایش‌اند.</div>
+          <div class="grid grid-2" style="margin-top:.6rem">
+            <div class="field"><label>نام برند / سایت</label><input class="input" id="geoBrandName" placeholder="مثلاً: دستیار هوشمند سئو"></div>
+            <div class="field"><label>دامنهٔ سایت</label><input class="input" id="geoBrandDomain" placeholder="example.com"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1rem">
+          <h3>۲. پرسش‌هایی که کاربران واقعی ممکن است از AI بپرسند</h3>
+          <div class="card-sub">هر خط یک پرسش — پرسش‌هایی را بنویسید که مشتری بالقوهٔ شما ممکن است از ChatGPT/Claude بپرسد (نه لزوماً شامل نام برند شما).</div>
+          <textarea class="textarea" id="geoQueries" style="min-height:110px;margin-top:.5rem" placeholder="مثلاً:&#10;بهترین ابزار سئو برای وردپرس چیست؟&#10;چطور می‌توانم دیده‌شدن سایتم را در چت‌جی‌پی‌تی بسنجم؟"></textarea>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem">
+            <button class="btn btn-primary" id="geoRunBtn"><i class="fa-solid fa-satellite-dish"></i>بررسی دیده‌شدن در AI</button>
+            <span class="card-sub" id="geoProviderHint" style="margin:0"></span>
+          </div>
+        </div>
+
+        <div class="card" id="geoNoKeyNote" style="margin-top:1rem;display:none">
+          <div class="empty"><i class="fa-solid fa-key"></i>AI Provider Not Configured — ابتدا حداقل یک کلید API در «تنظیمات هوش مصنوعی» وارد کنید.</div>
+        </div>
+
+        <div class="card" id="geoSummaryCard" style="margin-top:1rem;display:none">
+          <h3>خلاصهٔ AI Visibility</h3>
+          <div class="grid grid-3" style="margin-top:.6rem">
+            <div><div style="font-size:1.3rem;font-weight:800" id="geoScoreNum">—</div><div class="card-sub" style="margin:0">AI Visibility Score</div></div>
+            <div><div style="font-size:1.3rem;font-weight:800" id="geoMentionCount">۰</div><div class="card-sub" style="margin:0">پاسخ‌های حاوی نام برند</div></div>
+            <div><div style="font-size:1.3rem;font-weight:800" id="geoUrlCount">۰</div><div class="card-sub" style="margin:0">پاسخ‌های حاوی لینک/دامنه</div></div>
+          </div>
+        </div>
+
+        <div class="card" id="geoResultCard" style="margin-top:1rem;display:none">
+          <h3>نتیجهٔ بررسی (Evidence)</h3>
+          <div class="card-sub">برای هر ردیف، متن کامل پاسخ مدل ذخیره شده تا ادعا بدون مدرک نباشد.</div>
+          <div class="table-wrap" style="margin-top:.6rem"><table id="geoResultTable"><thead><tr><th>پرسش</th><th>Provider</th><th>ذکر برند</th><th>ذکر لینک</th><th>تاریخ</th><th></th></tr></thead><tbody></tbody></table></div>
+        </div>
+
+        <div class="card" id="geoHistoryCard" style="margin-top:1rem;display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3 style="margin:0">روند AI Visibility</h3>
+            <button class="btn btn-ghost btn-sm" id="geoClearLogBtn"><i class="fa-solid fa-trash"></i>پاک کردن تاریخچه</button>
+          </div>
+          <div class="card-sub">هر بار که بررسی را اجرا کنید، یک نقطهٔ جدید (Snapshot تاریخ‌دار) به این روند اضافه می‌شود.</div>
+          <div class="table-wrap" style="margin-top:.6rem"><table id="geoHistoryTable"><thead><tr><th>تاریخ</th><th>تعداد پرسش</th><th>AI Visibility Score</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </section>
+
       <!-- ============ TECHNICAL CHECKLIST ============ -->
       <section class="panel" data-panel="checklist">
         <div class="page-head">
@@ -1270,6 +1342,7 @@ const titles = {
   keywords: ['تحقیق کلمات کلیدی','پیشنهاد کلمات کلیدی طولانی با هوش مصنوعی'],
   outline: ['ساختار محتوا','طرح مقاله بر اساس کلمهٔ کلیدی هدف'],
   competitor: ['تحلیل رقبا','مقایسهٔ محتوای شما با رقیب رتبه‌برتر'],
+  geo: ['GEO و دیده‌شدن در AI','بررسی این‌که برند شما در پاسخ‌های ChatGPT، Claude و DeepSeek دیده می‌شود یا نه'],
   checklist: ['چک‌لیست فنی سئو','پیگیری اقدامات فنی، محتوایی و لینک‌سازی'],
   promptgen: ['پرامپت بهبود با کلود','یک پرامپت آماده از نتایج بسازید و در کلود ادامه دهید'],
   export: ['خروجی و گزارش','دانلود نتایج به شکل JSON، CSV، Markdown یا HTML'],
@@ -1655,6 +1728,11 @@ function onActiveProjectChanged(){
   }
   refreshKeyBtn();
   if(typeof renderChecklist === 'function'){ renderChecklist(); renderChecklistSummary(); }
+  if(typeof refreshGeoState === 'function'){
+    document.getElementById('geoBrandName').value = '';
+    document.getElementById('geoBrandDomain').value = '';
+    refreshGeoState();
+  }
   if(typeof updateOverallScore === 'function') updateOverallScore();
 }
 
@@ -1760,6 +1838,7 @@ function updateOverallScore(){
     document.getElementById('dashOnpageBar').style.width = op + '%';
   }
   renderDashboardOppSummary();
+  if(typeof renderAiManagerSummary === 'function') renderAiManagerSummary();
 }
 
 /* Pulls the results of the last "شناسایی فرصت‌ها" run (Opportunities
@@ -4471,8 +4550,232 @@ document.getElementById('exportProjectJsonBtn').addEventListener('click', ()=>{
 });
 
 /* ============================================================
+   GEO ENGINE — AI Visibility check (section 13–16, 40 of spec)
+   Calls only the AI providers the user has already configured a
+   key for (via AIEngine — no separate provider layer needed since
+   OpenAI/Claude/DeepSeek adapters already exist there). Every
+   result stores the model's full raw response as evidence; a
+   mention/citation is only ever reported from a stored answer,
+   never guessed. If no key is configured, the UI shows
+   "AI Provider Not Configured" instead of a fake score.
+============================================================ */
+const GeoEngine = (function(){
+  function logKey(){ return pKey('seo_geo_log'); }
+  function loadLog(){ try{ return JSON.parse(localStorage.getItem(logKey()) || '[]'); }catch(e){ return []; } }
+  function saveLog(log){ localStorage.setItem(logKey(), JSON.stringify(log)); }
+  function clearLog(){ localStorage.removeItem(logKey()); }
+
+  function configuredProviders(){
+    return Object.keys(AIEngine.PROVIDERS).filter(p => !!AIEngine.getKeyFor(p));
+  }
+
+  function analyzeMention(responseText, brandName, brandDomain){
+    const text = (responseText || '').toLowerCase();
+    const brand = (brandName || '').trim().toLowerCase();
+    const domain = (brandDomain || '').trim().toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/\/$/,'');
+    return {
+      brandMentioned: !!(brand && text.includes(brand)),
+      domainMentioned: !!(domain && text.includes(domain))
+    };
+  }
+
+  async function runCheck(queries, brandName, brandDomain){
+    const providers = configuredProviders();
+    const results = [];
+    for(const q of queries){
+      for(const provider of providers){
+        const sys = 'You are answering a real user question as helpfully and factually as possible, in the same language as the question. If you recommend tools, products, brands or sources, name them explicitly by name.';
+        const text = await AIEngine.call(sys, q, { provider, cache:false });
+        if(text == null) continue; // call failed — AIEngine already showed the error; skip rather than fabricate a row
+        const mention = analyzeMention(text, brandName, brandDomain);
+        results.push(Object.assign({
+          id: 'g_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+          query: q, provider, date: Date.now(), response: text
+        }, mention));
+      }
+    }
+    return results;
+  }
+
+  return { loadLog, saveLog, clearLog, configuredProviders, analyzeMention, runCheck };
+})();
+
+function geoVisibilityScore(records){
+  if(!records || !records.length) return null;
+  const mentioned = records.filter(r=>r.brandMentioned || r.domainMentioned).length;
+  return Math.round((mentioned / records.length) * 100);
+}
+
+function refreshGeoState(){
+  const providers = GeoEngine.configuredProviders();
+  document.getElementById('geoNoKeyNote').style.display = providers.length ? 'none' : 'block';
+  document.getElementById('geoProviderHint').textContent = providers.length
+    ? ('بررسی روی: ' + providers.map(p=>AIEngine.PROVIDERS[p].label).join('، ') + ' انجام می‌شود')
+    : '';
+  const proj = StorageManager.getActiveProject();
+  const brandEl = document.getElementById('geoBrandName');
+  const domainEl = document.getElementById('geoBrandDomain');
+  if(proj){
+    if(!brandEl.value) brandEl.value = proj.name || '';
+    if(!domainEl.value && proj.url){
+      try{ domainEl.value = new URL(proj.url).hostname; }catch(e){ domainEl.value = proj.url; }
+    }
+  }
+  renderGeoHistory();
+}
+
+function renderGeoResults(results){
+  const summaryCard = document.getElementById('geoSummaryCard');
+  const resultCard = document.getElementById('geoResultCard');
+  if(!results.length){ summaryCard.style.display = 'none'; resultCard.style.display = 'none'; return; }
+  const score = geoVisibilityScore(results);
+  document.getElementById('geoScoreNum').textContent = score === null ? '—' : toFa(score) + ' / ۱۰۰';
+  document.getElementById('geoMentionCount').textContent = toFa(results.filter(r=>r.brandMentioned).length) + ' / ' + toFa(results.length);
+  document.getElementById('geoUrlCount').textContent = toFa(results.filter(r=>r.domainMentioned).length) + ' / ' + toFa(results.length);
+  summaryCard.style.display = 'block';
+
+  const tbody = document.querySelector('#geoResultTable tbody');
+  tbody.innerHTML = results.map((r,i)=>`
+    <tr>
+      <td>${escapeHtml(r.query)}</td>
+      <td>${escapeHtml(AIEngine.PROVIDERS[r.provider] ? AIEngine.PROVIDERS[r.provider].label : r.provider)}</td>
+      <td>${r.brandMentioned ? '<span class="badge badge-ok">بله</span>' : '<span class="badge badge-bad">خیر</span>'}</td>
+      <td>${r.domainMentioned ? '<span class="badge badge-ok">بله</span>' : '<span class="badge badge-bad">خیر</span>'}</td>
+      <td>${new Date(r.date).toLocaleDateString('fa-IR')}</td>
+      <td><button class="btn btn-ghost btn-sm geo-view-resp" data-idx="${i}" title="مشاهدهٔ پاسخ کامل"><i class="fa-solid fa-eye"></i></button></td>
+    </tr>`).join('');
+  tbody.querySelectorAll('.geo-view-resp').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const r = results[parseInt(btn.dataset.idx,10)];
+      alert('پرسش: ' + r.query + '\n\n--- پاسخ کامل مدل (' + r.provider + ') ---\n\n' + r.response);
+    });
+  });
+  resultCard.style.display = 'block';
+}
+
+function renderGeoHistory(){
+  const log = GeoEngine.loadLog();
+  const card = document.getElementById('geoHistoryCard');
+  if(!log.length){ card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  const byDay = {};
+  log.forEach(r=>{
+    const day = new Date(r.date).toLocaleDateString('fa-IR');
+    (byDay[day] = byDay[day] || []).push(r);
+  });
+  const rows = Object.keys(byDay).map(day=>({ day, count: byDay[day].length, score: geoVisibilityScore(byDay[day]) }));
+  document.querySelector('#geoHistoryTable tbody').innerHTML = rows.map(r=>
+    `<tr><td>${r.day}</td><td>${toFa(r.count)}</td><td>${r.score===null?'—':toFa(r.score)+'/۱۰۰'}</td></tr>`
+  ).join('');
+}
+
+document.getElementById('geoRunBtn').addEventListener('click', async ()=>{
+  const providers = GeoEngine.configuredProviders();
+  if(!providers.length){ toast('ابتدا حداقل یک کلید API در تنظیمات هوش مصنوعی وارد کنید', true); openAiSettingsModal(); return; }
+  const queries = document.getElementById('geoQueries').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  if(!queries.length){ toast('حداقل یک پرسش وارد کنید', true); return; }
+  const brandName = document.getElementById('geoBrandName').value.trim();
+  const brandDomain = document.getElementById('geoBrandDomain').value.trim();
+  if(!brandName && !brandDomain){ toast('نام برند یا دامنه را وارد کنید تا تشخیص «ذکر برند» ممکن باشد', true); return; }
+
+  const btn = document.getElementById('geoRunBtn');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> در حال بررسی ${toFa(queries.length * providers.length)} پاسخ...`;
+
+  const results = await GeoEngine.runCheck(queries, brandName, brandDomain);
+  GeoEngine.saveLog(GeoEngine.loadLog().concat(results));
+
+  renderGeoResults(results);
+  renderGeoHistory();
+  updateOverallScore();
+
+  btn.disabled = false;
+  btn.innerHTML = original;
+  toast(results.length ? 'بررسی دیده‌شدن در AI انجام شد' : 'پاسخی از هیچ Providerی دریافت نشد', !results.length);
+});
+
+document.getElementById('geoClearLogBtn').addEventListener('click', ()=>{
+  if(!confirm('تاریخچهٔ AI Visibility این پروژه پاک شود؟ این کار قابل بازگشت نیست.')) return;
+  GeoEngine.clearLog();
+  renderGeoResults([]);
+  renderGeoHistory();
+  updateOverallScore();
+  toast('تاریخچه پاک شد');
+});
+
+/* ============================================================
+   AI SEO MANAGER — dashboard summary (section 8 & 31 of spec)
+   Ranks *only* actions backed by data already collected in this
+   project (checklist, last on-page scan, last opportunity run,
+   GEO log). Nothing here is a fresh AI call — it is a rule-based
+   synthesis of evidence that already exists locally, so it costs
+   nothing and never invents a number.
+============================================================ */
+function renderAiManagerSummary(){
+  const card = document.getElementById('aiManagerCard');
+  const cl = getChecklistPct();
+  const op = getOnpageScore();
+  const run = (typeof loadLastOpportunityRun === 'function') ? loadLastOpportunityRun() : null;
+  const geoLog = (typeof GeoEngine !== 'undefined') ? GeoEngine.loadLog() : [];
+  const geoScore = geoLog.length ? geoVisibilityScore(geoLog) : null;
+
+  const hasAnyData = cl > 0 || op !== null || !!run || geoLog.length > 0;
+  if(!hasAnyData){ card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  const problems = [];
+  if(run && run.scored){
+    const high = run.scored.filter(o=>o.level==='High');
+    if(high.length) problems.push(`${toFa(high.length)} فرصت با اولویت بالا در دادهٔ Search Console`);
+    if(run.cann && run.cann.length) problems.push(`${toFa(run.cann.length)} احتمال رقابت داخلی بین صفحات`);
+  }
+  if(op !== null && op < 60) problems.push('امتیاز آخرین تحلیل آنی صفحه پایین است');
+  if(geoScore !== null && geoScore < 50) problems.push('برند شما در بیشتر پاسخ‌های AI دیده نمی‌شود');
+
+  document.getElementById('aiManagerIntro').textContent = problems.length
+    ? ('من سایت شما را بر اساس داده‌های موجود بررسی کردم — ' + problems.join('، ') + '.')
+    : 'من سایت شما را بررسی کردم — در داده‌های فعلی مشکل مهمی پیدا نشد.';
+
+  const counts = [];
+  if(run) counts.push(`<span class="badge ${run.scored.filter(o=>o.level==='High').length ? 'badge-bad':'badge-ok'}">🎯 ${toFa(run.scored.length)} فرصت سئو</span>`);
+  if(run && run.cann) counts.push(`<span class="badge ${run.cann.length?'badge-warn':'badge-ok'}">⚠️ ${toFa(run.cann.length)} رقابت داخلی</span>`);
+  if(geoLog.length) counts.push(`<span class="badge ${geoScore!==null && geoScore<50 ? 'badge-warn':'badge-ok'}">🌐 GEO ${geoScore===null?'—':toFa(geoScore)+'/۱۰۰'}</span>`);
+  counts.push(`<span class="badge ${cl>=70?'badge-ok':'badge-warn'}">✅ ${toFa(cl)}٪ چک‌لیست فنی</span>`);
+  document.getElementById('aiManagerCounts').innerHTML = counts.join('');
+
+  const actions = [];
+  if(run && run.scored && run.scored.length){
+    const top = run.scored[0];
+    actions.push({ text:`اصلاح «${top.query||'صفحه'}» — ${top.suggestedAction}`, goto:'opportunities', icon:'fa-bullseye' });
+  }
+  if(run && run.cann && run.cann.length){
+    actions.push({ text:'بررسی صفحاتی که برای یک عبارت مشترک با هم رقابت می‌کنند (Cannibalization)', goto:'opportunities', icon:'fa-triangle-exclamation' });
+  }
+  if(cl < 70){
+    actions.push({ text:'تکمیل موارد باقی‌ماندهٔ چک‌لیست فنی سئو', goto:'checklist', icon:'fa-list-check' });
+  }
+  if(geoLog.length === 0){
+    actions.push({ text:'بررسی کنید برند شما در پاسخ‌های ChatGPT/Claude دیده می‌شود یا نه', goto:'geo', icon:'fa-globe' });
+  }else if(geoScore !== null && geoScore < 50){
+    actions.push({ text:'تقویت محتوای Answer-first و Entity برای دیده‌شدن بهتر در AI (GEO)', goto:'geo', icon:'fa-globe' });
+  }
+  if(!actions.length){
+    actions.push({ text:'یک تحلیل جدید از تب «فرصت‌ها و اقدامات» اجرا کنید تا داده تازه بگیرید', goto:'opportunities', icon:'fa-rotate' });
+  }
+
+  document.getElementById('aiManagerActions').innerHTML = actions.slice(0,3).map((a,i)=>
+    `<div class="check-row"><i class="fa-solid ${a.icon} icon" style="color:var(--accent)"></i><div class="txt"><b>${toFa(i+1)}. ${escapeHtml(a.text)}</b></div><button class="btn btn-ghost btn-sm" data-ai-goto="${a.goto}">مشاهده</button></div>`
+  ).join('');
+  document.getElementById('aiManagerActions').querySelectorAll('[data-ai-goto]').forEach(btn=>{
+    btn.addEventListener('click', ()=>goto(btn.dataset.aiGoto));
+  });
+}
+
+/* ============================================================
    INIT
 ============================================================ */
+refreshGeoState();
 updateOverallScore();
 </script>
 </body>
